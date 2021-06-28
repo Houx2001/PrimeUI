@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<!--@elvariable id="user" type="DTO.User"-->
+<!--@elvariable id="tableBean" type="Beans.TableBean"-->
+<h:head>
+    <title>UserList with PrimeFaces and MyBatis</title>
+</h:head>
+
+<f:event type="preRenderView" listener="#{tableBean.init}" />
+
+<h:form id="form1">
+    <p:growl id="msgs" showDetail="true" skipDetailIfEqualsSummary="true" />
+    <p:panel>
+        <p:dataTable
+                id="list"
+                value="#{tableBean.users}"
+                var="user"
+                paginator="true"
+                rows="10"
+                rowsPerPageTemplate="5,10,15"
+                editable="true"
+                rowKey="#{user.userId}"
+                selection="#{tableBean.selectedUser}"
+                selectionMode="single">
+
+            <p:ajax event="rowSelect" listener="#{tableBean.onRowSelect}" update=":form1"  />
+
+            <f:facet name="header">
+               用户列表
+            </f:facet>
+
+            <p:column sortBy="#{user.userId}" headerText="Id">
+                <h:outputText value="#{user.userId}" />
+            </p:column>
+
+            <p:column headerText="用户姓名">
+                <h:outputText value="#{user.userName}" />
+            </p:column>
+
+            <p:column headerText="用户性别">
+                <h:outputText value="#{user.userGender}" />
+            </p:column>
+
+            <p:column sortBy="#{user.birthDate}" headerText="用户生日">
+                <h:outputText value="#{user.birthDate}" />
+            </p:column>
+
+        </p:dataTable>
+    </p:panel>
+
+    <p:panel>
+        <p:commandButton value="添加用户"
+                         onclick="PF('adddlg').show()"
+                         process="@this"
+                         style="width:200px;height:30px"/>
+
+        <p:commandButton value="更改用户"
+                         onclick="PF('dlg2').show();"
+                         process="@this"
+                         update=":form1:msgs"
+                         style="width:200px;height:30px"/>
+
+        <p:commandButton value="删除用户"
+                         action="#{tableBean.delete}"
+                         update=":form1"
+                         immediate="true"
+                         style="width:200px;height:30px"/>
+    </p:panel>
+
+    <p:dialog id="addDialog" header="添加用户" widgetVar="adddlg" resizable="false" showEffect="clip" hideEffect="fold">
+        <h:panelGrid columns="3" style="margin-bottom:10px">
+            <h:outputLabel for="userName" value="用户姓名" />
+            <p:inputText id="userName" value="#{tableBean.inputtedName}" required="true" >
+                <f:validateLength minimum="1" maximum="100" />
+            </p:inputText>
+            <p:message for="userName" value=""/>
+
+            <h:outputLabel for="userGender" value="用户性别" />
+            <h:selectOneMenu id = "userGender" value="#{tableBean.inputtedGender}"  dynamic="true" style="width:100%">
+                <f:selectItem itemLabel="男" itemValue="Men" />
+                <f:selectItem itemLabel="女" itemValue="Women"/>
+            </h:selectOneMenu>
+            <p:message for="userGender" value=""/>
+
+            <h:outputLabel for="birthDate" value="用户生日" />
+            <p:calendar id="birthDate"
+                        pattern="yyyy-MM-dd"
+                        value="#{tableBean.inputtedDate}">
+            </p:calendar>
+            <p:message for="birthDate" value=""/>
+
+        </h:panelGrid>
+        <p:commandButton
+                id="addBtn"
+                value="添加"
+                action="#{tableBean.add}"
+                process="@this addDialog"
+                update=":form1"
+                validateClient="true"
+                oncomplete="PF('adddlg').hide();"
+        />
+    </p:dialog>
+
+    <p:dialog id="updDialog" header="更新用户" widgetVar="dlg2" resizable="false" showEffect="clip" hideEffect="fold">
+    <h:panelGrid columns="3" style="margin-bottom:10px">
+    <h:outputLabel for="newName" value="用户姓名" />
+    <p:inputText id="newName" value="#{tableBean.selectedUser.userName}" required="true" >
+        <f:validateLength minimum="1" maximum="100" />
+    </p:inputText>
+    <p:message for="newName" value=""/>
+
+    <h:outputLabel for="newGender" value="用户性别" />
+    <h:selectOneMenu id = "newGender" value="#{tableBean.selectedUser.userGender}"  dynamic="true" style="width:100%">
+        <f:selectItem itemLabel="男" itemValue="MALE" />
+        <f:selectItem itemLabel="女" itemValue="FEMALE"/>
+    </h:selectOneMenu>
+    <p:message for="newGender" value=""/>
+
+        <h:outputLabel for="newDate" value="用户生日" />
+        <p:calendar id="newDate"
+                    pattern="yyyy-MM-dd"
+                    value="#{tableBean.selectedUser.birthDate}">
+        </p:calendar>
+        <p:message for="newDate" value=""/>
+    </h:panelGrid>
+    <p:commandButton
+            id="updBtn"
+            value="更新用户"
+            action="#{tableBean.update}"
+            process="@this updDialog"
+            update=":form1"
+            validateClient="true"
+            oncomplete="PF('dlg2').hide();"
+    />
+    </p:dialog>
+</h:form>
+</html>
