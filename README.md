@@ -1,13 +1,19 @@
 # PrimeUI Example
 Web application with Primefaces and MyBatis
+
 JSF 2.3
+
 PrimeFaces 10.0
+
 MyBatis 3.5.4
+
 MySQL 8.0
+
 Liberty 21.0
+
 Users datatable with id, full name, birth date and gender.
 
-# Quick Star
+# Quick Start
 1. Run mysql_run.sh
 2. Execute create-table-user.sql
 3. In project folder run mvn install 
